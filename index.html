@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ICT — Inner Circle Trader</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #0f0f0f;
+  --paper: #f7f6f2;
+  --paper2: #efefeb;
+  --line: #e0dfd9;
+  --dim: #9c9b96;
+  --faint: #c8c7c2;
+  --up: #2d6a4f;
+  --up-bg: #f0faf4;
+  --down: #9b1c1c;
+  --down-bg: #fdf2f2;
+  --neutral: #4a4a4a;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+  display: flex; align-items: stretch;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 0; margin-right: 20px;
+  border-right: 1px solid var(--line);
+  padding-right: 20px;
+}
+.brand-mark {
+  width: 26px; height: 26px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--paper); font-weight: 800;
+}
+.brand-name {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.nav-tabs {
+  display: flex; overflow-x: auto; gap: 0;
+  scrollbar-width: none; flex: 1;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 14px;
+  border: none; background: transparent;
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 1px;
+  color: var(--dim); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: all .15s;
+  text-transform: uppercase;
+}
+.nav-tab:hover { color: var(--ink); }
+.nav-tab.on { color: var(--ink); border-bottom-color: var(--ink); }
+.nav-tab .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0; transition: opacity .15s;
+}
+.nav-tab.on .dot { opacity: 1; }
+
+/* PAGES */
+.page { display: none; padding: 24px 20px; max-width: 740px; margin: 0 auto; animation: up .2s ease; }
+.page.on { display: block; }
+@keyframes up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* TYPOGRAPHY */
+.eyebrow {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--dim);
+  margin-bottom: 20px;
+}
+h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+p.lead { font-size: 13px; color: var(--dim); line-height: 1.6; margin-bottom: 20px; }
+
+/* DIVIDER */
+hr { border: none; border-top: 1px solid var(--line); margin: 20px 0; }
+
+/* CONCEPTS */
+.concept-list { display: flex; flex-direction: column; gap: 1px; }
+.concept-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  cursor: pointer; transition: all .15s;
+  border-radius: 2px;
+}
+.concept-row:hover, .concept-row.on {
+  background: var(--ink); color: var(--paper);
+}
+.concept-row:hover .concept-meta,
+.concept-row.on .concept-meta { color: var(--faint); }
+.concept-num {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; color: var(--dim);
+  width: 24px; flex-shrink: 0;
+}
+.concept-row:hover .concept-num,
+.concept-row.on .concept-num { color: var(--faint); }
+.concept-name { font-size: 13px; font-weight: 600; flex: 1; }
+.concept-meta { font-size: 10px; color: var(--dim); font-family: 'Syne Mono', monospace; }
+.concept-arrow { font-size: 12px; color: var(--dim); transition: transform .15s; }
+.concept-row.on .concept-arrow { transform: rotate(90deg); }
+
+.concept-panel {
+  display: none;
+  border: 1px solid var(--line);
+  border-top: none;
+  margin-bottom: 1px;
+}
+.concept-panel.on { display: block; }
+.concept-panel-inner { padding: 20px; }
+.concept-intro {
+  font-size: 12px; color: var(--dim); line-height: 1.7;
+  margin-bottom: 16px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.rule-group { margin-bottom: 14px; }
+.rule-group-title {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 2px;
+  color: var(--dim); margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.rule-item {
+  display: flex; gap: 10px;
+  font-size: 12px; line-height: 1.6;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--neutral);
+}
+.rule-item:last-child { border: none; }
+.rule-dash {
+  color: var(--dim); flex-shrink: 0;
+  font-family: 'Syne Mono', monospace;
+}
+
+/* CHECKLIST */
+.checklist-wrap {}
+.check-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 12px;
+}
+.check-progress-text {
+  font-family: 'Syne Mono', monospace;
+  font-size: 10px; color: var(--dim);
+}
+.check-reset {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 1px;
+  background: none; border: 1px solid var(--line);
+  color: var(--dim); padding: 4px 10px;
+  cursor: pointer; transition: all .15s;
+}
+.check-reset:hover { border-color: var(--ink); color: var(--ink); }
+.progress-track {
+  height: 1px; background: var(--line);
+  margin-bottom: 20px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; background: var(--ink);
+  transition: width .3s ease;
+}
+.check-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer; transition: all .15s;
+  user-select: none;
+}
+.check-item:last-child { border: none; }
+.check-item:hover { padding-left: 4px; }
+.check-box {
+  width: 16px; height: 16px;
+  border: 1px solid var(--faint);
+  flex-shrink: 0; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.check-item.done .check-box {
+  background: var(--ink); border-color: var(--ink);
+}
+.check-tick { display: none; color: var(--paper); font-size: 10px; }
+.check-item.done .check-tick { display: block; }
+.check-text {
+  font-size: 12px; color: var(--ink); flex: 1;
+  transition: all .15s;
+}
+.check-item.done .check-text { color: var(--dim); text-decoration: line-through; }
+.ready-note {
+  margin-top: 20px; padding: 16px;
+  border: 1px solid var(--up);
+  background: var(--up-bg);
+  display: none;
+}
+.ready-note.on { display: block; }
+.ready-note-text {
+  font-size: 12px; color: var(--up);
+  font-weight: 600; letter-spacing: 1px;
+}
+
+/* BIAS */
+.bias-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.bias-q-card {
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+}
+.bias-question { font-size: 12px; margin-bottom: 10px; line-height: 1.5; }
+.bias-btns { display: flex; gap: 6px; }
+.bias-btn {
+  padding: 5px 16px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 2px;
+  cursor: pointer; transition: all .15s;
+  color: var(--dim);
+}
+.bias-btn.yes { border-color: var(--up); background: var(--up-bg); color: var(--up); }
+.bias-btn.no { border-color: var(--down); background: var(--down-bg); color: var(--down); }
+.bias-btn.clr { color: var(--faint); border-color: var(--line); }
+.bias-result-card {
+  border: 1px solid var(--line);
+  padding: 24px 20px; text-align: center;
+}
+.bias-result-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  color: var(--dim); margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.bias-result-value {
+  font-size: 28px; font-weight: 800;
+  letter-spacing: 2px; margin-bottom: 6px;
+}
+.bias-result-sub {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; color: var(--dim);
+}
+
+/* JOURNAL */
+.journal-form {
+  border: 1px solid var(--line);
+  padding: 20px; margin-bottom: 24px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.field label {
+  display: block;
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 2px;
+  color: var(--dim); margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 8px 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--ink);
+}
+.field textarea { resize: vertical; }
+.field select option { background: var(--paper); }
+.log-btn {
+  background: var(--ink); color: var(--paper);
+  border: none; padding: 10px 20px;
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  cursor: pointer; transition: opacity .15s;
+  text-transform: uppercase;
+}
+.log-btn:hover { opacity: 0.8; }
+.trade-row {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+.trade-row:last-child { border: none; }
+.trade-pair { font-size: 13px; font-weight: 700; }
+.trade-info { display: flex; gap: 10px; align-items: center; margin-top: 2px; }
+.trade-tag {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; color: var(--dim);
+}
+.trade-badge {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 1px;
+  padding: 3px 8px; border: 1px solid;
+}
+.trade-badge.W { color: var(--up); border-color: var(--up); background: var(--up-bg); }
+.trade-badge.L { color: var(--down); border-color: var(--down); background: var(--down-bg); }
+.trade-badge.B { color: var(--dim); border-color: var(--line); }
+.no-trades {
+  text-align: center; padding: 40px;
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; color: var(--dim); letter-spacing: 2px;
+}
+
+/* SESSIONS */
+.session-clock {
+  border: 1px solid var(--line); padding: 20px;
+  text-align: center; margin-bottom: 20px;
+}
+.clock-time {
+  font-family: 'Syne Mono', monospace;
+  font-size: 32px; font-weight: 400;
+  letter-spacing: 4px; margin-bottom: 4px;
+}
+.clock-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  color: var(--dim); text-transform: uppercase;
+}
+.session-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.session-card {
+  background: var(--paper);
+  padding: 16px; transition: background .2s;
+}
+.session-card.live { background: var(--up-bg); }
+.session-card.soon { background: #fffdf0; }
+.session-card.weekend-mode { opacity: 0.5; }
+.session-name {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--dim); margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.session-card.live .session-name { color: var(--up); }
+.session-time {
+  font-size: 18px; font-weight: 700;
+  font-family: 'Syne Mono', monospace;
+  letter-spacing: 1px; margin-bottom: 4px;
+}
+.session-status {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 1px;
+  color: var(--dim); text-transform: uppercase;
+}
+.session-card.live .session-status { color: var(--up); font-weight: 600; }
+.session-card.soon .session-status { color: #856404; }
+.weekend-banner {
+  border: 1px solid var(--line);
+  padding: 16px; text-align: center;
+  margin-bottom: 16px; display: none;
+  background: var(--paper2);
+}
+.weekend-banner.on { display: block; }
+.weekend-text {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--dim); text-transform: uppercase;
+}
+
+/* CALCULATOR */
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.calc-result-box {
+  border: 1px solid var(--line); margin-top: 16px;
+  display: none;
+}
+.calc-result-box.on { display: block; }
+.calc-result-row {
+  display: flex; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.calc-result-row:last-child { border: none; }
+.calc-result-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: 1px;
+  align-self: center;
+}
+.calc-result-val { font-weight: 700; font-size: 14px; }
+.calc-result-val.pos { color: var(--up); }
+.calc-result-val.neg { color: var(--down); }
+
+/* AI CHAT */
+.ai-wrap { display: flex; flex-direction: column; height: calc(100vh - 140px); }
+.ai-header {
+  padding-bottom: 16px; margin-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.ai-status {
+  display: flex; align-items: center; gap: 8px;
+}
+.ai-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--up); animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.ai-status-text {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  color: var(--dim); text-transform: uppercase;
+}
+.ai-chips {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.ai-chip {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 1px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  background: transparent; color: var(--dim);
+  cursor: pointer; transition: all .15s;
+  white-space: nowrap; text-transform: uppercase;
+}
+.ai-chip:hover { border-color: var(--ink); color: var(--ink); }
+.ai-messages {
+  flex: 1; overflow-y: auto;
+  display: flex; flex-direction: column;
+  gap: 12px; padding-right: 4px;
+}
+.ai-messages::-webkit-scrollbar { width: 2px; }
+.ai-messages::-webkit-scrollbar-track { background: transparent; }
+.ai-messages::-webkit-scrollbar-thumb { background: var(--line); }
+.ai-bubble {
+  max-width: 88%;
+  padding: 12px 14px;
+  font-size: 12px; line-height: 1.65;
+}
+.ai-bubble.user {
+  align-self: flex-end;
+  background: var(--ink); color: var(--paper);
+}
+.ai-bubble.bot {
+  align-self: flex-start;
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  color: var(--neutral);
+}
+.ai-bubble.thinking {
+  align-self: flex-start;
+  background: transparent; border: none;
+  color: var(--dim);
+  font-family: 'Syne Mono', monospace;
+  font-size: 10px; padding: 6px 0;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.ai-input-row {
+  display: flex; gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 8px;
+}
+.ai-input {
+  flex: 1;
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 10px 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px; resize: none;
+  transition: border-color .15s;
+  max-height: 80px;
+}
+.ai-input:focus { outline: none; border-color: var(--ink); }
+.ai-send {
+  background: var(--ink); color: var(--paper);
+  border: none; padding: 10px 16px;
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  cursor: pointer; transition: opacity .15s;
+  flex-shrink: 0;
+}
+.ai-send:hover { opacity: 0.8; }
+.ai-send:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* SCANNER */
+.scan-result { border: 1px solid var(--line); margin-top: 16px; display: none; }
+.scan-result.on { display: block; }
+.scan-row {
+  display: flex; gap: 12px; padding: 14px 16px;
+  border-bottom: 1px solid var(--line); align-items: flex-start;
+}
+.scan-row:last-child { border: none; }
+.scan-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.scan-title { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.scan-title.up { color: var(--up); }
+.scan-title.dn { color: var(--down); }
+.scan-title.neu { color: var(--neutral); }
+.scan-desc { font-size: 11px; color: var(--dim); line-height: 1.5; }
+
+/* PATTERNS */
+.pattern-filters { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.pf-btn {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px; letter-spacing: 2px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  background: transparent; color: var(--dim);
+  cursor: pointer; transition: all .15s;
+  text-transform: uppercase;
+}
+.pf-btn.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pattern-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.pat-card {
+  background: var(--paper); cursor: pointer;
+  transition: background .15s;
+}
+.pat-card:hover, .pat-card.on { background: var(--paper2); }
+.pat-chart { padding: 10px; background: var(--ink); }
+.pat-chart svg { width: 100%; height: 100px; display: block; }
+.pat-info { padding: 12px; }
+.pat-name {
+  font-size: 11px; font-weight: 700; margin-bottom: 3px;
+}
+.pat-tag {
+  font-family: 'Syne Mono', monospace;
+  font-size: 7px; letter-spacing: 1px;
+  color: var(--dim); text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pat-desc { font-size: 10px; color: var(--dim); line-height: 1.5; }
+.pat-tfs { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+.pat-tf {
+  font-family: 'Syne Mono', monospace;
+  font-size: 7px; padding: 1px 5px;
+  border: 1px solid var(--line);
+  color: var(--dim); letter-spacing: 1px;
+}
+.pat-detail {
+  display: none; border: 1px solid var(--line);
+  border-top: none; padding: 16px;
+  background: var(--paper2); margin-bottom: 1px;
+}
+.pat-detail.on { display: block; }
+.how-box {
+  border-left: 2px solid var(--ink);
+  padding-left: 12px; margin-top: 10px;
+}
+.how-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 7px; letter-spacing: 2px;
+  color: var(--dim); text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.how-text { font-size: 11px; color: var(--neutral); line-height: 1.65; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="brand-mark">&#9632;</div>
+    <div class="brand-name">ICT</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab on" onclick="go('concepts',this)"><span class="dot"></span>Concepts</button>
+    <button class="nav-tab" onclick="go('patterns',this)"><span class="dot"></span>Patterns</button>
+    <button class="nav-tab" onclick="go('sessions',this)"><span class="dot"></span>Sessions</button>
+    <button class="nav-tab" onclick="go('checklist',this)"><span class="dot"></span>Checklist</button>
+    <button class="nav-tab" onclick="go('bias',this)"><span class="dot"></span>Bias</button>
+    <button class="nav-tab" onclick="go('calc',this)"><span class="dot"></span>Calculator</button>
+    <button class="nav-tab" onclick="go('scanner',this)"><span class="dot"></span>Scanner</button>
+    <button class="nav-tab" onclick="go('journal',this)"><span class="dot"></span>Journal</button>
+    <button class="nav-tab" onclick="go('ai',this)"><span class="dot"></span>AI</button>
+  </div>
+</nav>
+
+<!-- CONCEPTS -->
+<div class="page on" id="pg-concepts">
+  <div class="eyebrow">Inner Circle Trader — Study Guide</div>
+  <h2>Concepts</h2>
+  <p class="lead">Core ICT principles explained in depth. Tap any concept to expand.</p>
+  <div class="concept-list" id="concept-list"></div>
+</div>
+
+<!-- PATTERNS -->
+<div class="page" id="pg-patterns">
+  <div class="eyebrow">Visual Reference</div>
+  <h2>Chart Patterns</h2>
+  <p class="lead">Tap a pattern to see how to identify and trade it.</p>
+  <div class="pattern-filters">
+    <button class="pf-btn on" onclick="filterPat('all',this)">All</button>
+    <button class="pf-btn" onclick="filterPat('bullish',this)">Bullish</button>
+    <button class="pf-btn" onclick="filterPat('bearish',this)">Bearish</button>
+    <button class="pf-btn" onclick="filterPat('neutral',this)">Neutral</button>
+  </div>
+  <div class="pattern-grid" id="pattern-grid"></div>
+  <div class="pat-detail" id="pat-detail"></div>
+</div>
+
+<!-- SESSIONS -->
+<div class="page" id="pg-sessions">
+  <div class="eyebrow">Market Hours — EST</div>
+  <h2>Kill Zones</h2>
+  <p class="lead">Only trade during these windows. Outside them price is noise.</p>
+  <div class="weekend-banner" id="weekend-banner">
+    <div class="weekend-text">Markets closed &mdash; Weekend &mdash; Opens Sunday 5PM EST</div>
+  </div>
+  <div class="session-clock">
+    <div class="clock-time" id="clock-time">--:--:--</div>
+    <div class="clock-label" id="clock-date">New York Time</div>
+  </div>
+  <div class="session-grid" id="session-grid"></div>
+  <hr/>
+  <div style="font-size:11px;color:var(--dim);line-height:2">
+    <strong style="color:var(--ink)">Asian (8PM–11PM)</strong> — Range building. Mark H&amp;L for manipulation targets.<br>
+    <strong style="color:var(--ink)">London (2AM–5AM)</strong> — Most volatile. Often sets the high or low of the day.<br>
+    <strong style="color:var(--ink)">New York (7AM–10AM)</strong> — Confirms or reverses London. Best for indices.<br>
+    <strong style="color:var(--ink)">Weekend</strong> — Markets closed Fri 5PM to Sun 5PM. Study and plan only.
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="page" id="pg-checklist">
+  <div class="eyebrow">Pre-Trade Verification</div>
+  <h2>Trade Checklist</h2>
+  <p class="lead">All 11 conditions must be met before entering a position.</p>
+  <div class="check-header">
+    <div class="check-progress-text" id="check-txt">0 / 11 complete</div>
+    <button class="check-reset" onclick="resetChecks()">Reset</button>
+  </div>
+  <div class="progress-track"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+  <div id="check-list"></div>
+  <div class="ready-note" id="ready-note">
+    <div class="ready-note-text">&#10003; Setup confirmed — execute with discipline</div>
+  </div>
+</div>
+
+<!-- BIAS -->
+<div class="page" id="pg-bias">
+  <div class="eyebrow">Daily Preparation</div>
+  <h2>Bias Checker</h2>
+  <p class="lead">Answer each question to determine your directional bias for the session.</p>
+  <div class="bias-grid" id="bias-grid"></div>
+  <div class="bias-result-card">
+    <div class="bias-result-label">Session Bias</div>
+    <div class="bias-result-value" id="bias-val" style="color:var(--neutral)">Neutral</div>
+    <div class="bias-result-sub" id="bias-sub">Answer questions above</div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="page" id="pg-calc">
+  <div class="eyebrow">Risk Management Tool</div>
+  <h2>Trade Calculator</h2>
+  <p class="lead">Calculate position size, risk in dollars, and expected profit.</p>
+  <div class="journal-form">
+    <div class="calc-grid">
+      <div class="field"><label>Account Size ($)</label><input id="c-acc" type="number" placeholder="50000" oninput="calcIt()"/></div>
+      <div class="field"><label>Risk %</label><input id="c-risk" type="number" placeholder="1" step="0.1" oninput="calcIt()"/></div>
+      <div class="field"><label>Entry Price</label><input id="c-entry" type="number" placeholder="24335" oninput="calcIt()"/></div>
+      <div class="field"><label>Stop Loss</label><input id="c-sl" type="number" placeholder="24300" oninput="calcIt()"/></div>
+      <div class="field"><label>Take Profit 1</label><input id="c-tp1" type="number" placeholder="24400" oninput="calcIt()"/></div>
+      <div class="field"><label>Take Profit 2</label><input id="c-tp2" type="number" placeholder="24450" oninput="calcIt()"/></div>
+      <div class="field"><label>Instrument</label>
+        <select id="c-inst" onchange="calcIt()">
+          <option value="forex">Forex</option>
+          <option value="mnq">MNQ ($2/pt)</option>
+          <option value="mes">MES ($5/pt)</option>
+          <option value="nq">NQ ($20/pt)</option>
+          <option value="es">ES ($50/pt)</option>
+        </select>
+      </div>
+      <div class="field"><label>Direction</label>
+        <select id="c-dir" onchange="calcIt()">
+          <option value="long">Long</option>
+          <option value="short">Short</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="calc-result-box" id="calc-box">
+    <div class="calc-result-row"><span class="calc-result-label">Risk $</span><span class="calc-result-val neg" id="r-risk">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">Position Size</span><span class="calc-result-val" id="r-size">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">SL Distance</span><span class="calc-result-val" id="r-sl">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">Profit TP1</span><span class="calc-result-val pos" id="r-p1">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">Profit TP2</span><span class="calc-result-val pos" id="r-p2">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">R:R (TP1)</span><span class="calc-result-val" id="r-rr1">—</span></div>
+    <div class="calc-result-row"><span class="calc-result-label">R:R (TP2)</span><span class="calc-result-val" id="r-rr2">—</span></div>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div class="page" id="pg-scanner">
+  <div class="eyebrow">Setup Analysis</div>
+  <h2>ICT Scanner</h2>
+  <p class="lead">Input price levels and get an ICT-based setup analysis.</p>
+  <div class="journal-form">
+    <div class="calc-grid">
+      <div class="field"><label>Current Price</label><input id="s-price" type="number" placeholder="24335"/></div>
+      <div class="field"><label>Session High</label><input id="s-high" type="number" placeholder="24404"/></div>
+      <div class="field"><label>Session Low</label><input id="s-low" type="number" placeholder="24333"/></div>
+      <div class="field"><label>Prev Day High</label><input id="s-pdh" type="number" placeholder="24450"/></div>
+      <div class="field"><label>Prev Day Low</label><input id="s-pdl" type="number" placeholder="24200"/></div>
+      <div class="field"><label>Asian High</label><input id="s-ah" type="number" placeholder="24380"/></div>
+      <div class="field"><label>Asian Low</label><input id="s-al" type="number" placeholder="24310"/></div>
+      <div class="field"><label>HTF Trend</label>
+        <select id="s-trend">
+          <option value="bull">Bullish</option>
+          <option value="bear">Bearish</option>
+        </select>
+      </div>
+    </div>
+    <button class="log-btn" onclick="runScan()">Scan Setups</button>
+  </div>
+  <div class="scan-result" id="scan-result"></div>
+</div>
+
+<!-- JOURNAL -->
+<div class="page" id="pg-journal">
+  <div class="eyebrow">Trade Log</div>
+  <h2>Journal</h2>
+  <p class="lead">Log every trade. Review weekly. Consistency comes from data.</p>
+  <div class="journal-form">
+    <div class="form-row">
+      <div class="field"><label>Pair</label><input id="j-pair" placeholder="EURUSD"/></div>
+      <div class="field"><label>R:R</label><input id="j-rr" placeholder="1:3"/></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Bias</label>
+        <select id="j-bias"><option>Bullish</option><option>Bearish</option></select>
+      </div>
+      <div class="field"><label>Result</label>
+        <select id="j-res"><option value="W">Win</option><option value="L">Loss</option><option value="B">Breakeven</option></select>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:12px"><label>Notes</label>
+      <textarea id="j-notes" rows="2" placeholder="What did you see? What went right or wrong?"></textarea>
+    </div>
+    <button class="log-btn" onclick="logTrade()">Log Trade</button>
+  </div>
+  <div id="trade-list"><div class="no-trades">No trades logged yet</div></div>
+</div>
+
+<!-- AI -->
+<div class="page" id="pg-ai">
+  <div class="eyebrow">Powered by Claude</div>
+  <h2>AI Trade Analyst</h2>
+  <div class="ai-wrap">
+    <div class="ai-header">
+      <div class="ai-status">
+        <div class="ai-dot"></div>
+        <div class="ai-status-text">ICT Analyst — Online</div>
+      </div>
+    </div>
+    <div class="ai-chips">
+      <button class="ai-chip" onclick="chip('Analyze: bullish OB on 1H, liquidity swept below. Should I go long?')">Analyze OB</button>
+      <button class="ai-chip" onclick="chip('What is my bias if price is below 50% fib in an uptrend?')">Get Bias</button>
+      <button class="ai-chip" onclick="chip('Walk me through the full ICT entry model step by step')">Entry Model</button>
+      <button class="ai-chip" onclick="chip('How should I manage risk on a $50K prop firm account trading MNQ?')">Prop Risk</button>
+      <button class="ai-chip" onclick="chip('Explain the AMD model and how to trade the manipulation phase')">AMD Model</button>
+      <button class="ai-chip" onclick="chip('What makes a Fair Value Gap high probability?')">FVG Quality</button>
+    </div>
+    <div class="ai-messages" id="ai-msgs">
+      <div class="ai-bubble bot">Hello. I am your ICT trade analyst. Ask me about setups, structure, order blocks, FVGs, liquidity, or your trading plan. I will give you direct ICT-based analysis.</div>
+    </div>
+    <div class="ai-input-row">
+      <textarea class="ai-input" id="ai-in" rows="1" placeholder="Describe your setup or ask a question..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+      <button class="ai-send" id="ai-btn" onclick="sendAI()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── NAV ──────────────────────────────────────────────
+function go(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('pg-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ── DATA ─────────────────────────────────────────────
+const concepts = [
+  { id:'structure', name:'Market Structure', meta:'Foundation', intro:'The backbone of all ICT analysis. Before touching any tool, you must read the trend using swing highs and swing lows.',
+    groups:[
+      { title:'Trend Identification', rules:['Higher Highs + Higher Lows = Uptrend — price is bullish','Lower Highs + Lower Lows = Downtrend — price is bearish','Ranging = equal highs and equal lows — wait for clarity','Always mark ALL swing points before any analysis'] },
+      { title:'Break of Structure (BOS)', rules:['BOS = price breaks a previous swing high or low in trend direction','Bullish BOS = price breaks above the previous Higher High','Bearish BOS = price breaks below the previous Lower Low','BOS confirms trend continuation — look for entries after it'] },
+      { title:'Change of Character (CHoCH)', rules:['CHoCH = first sign that a trend may be reversing','Bullish CHoCH = in a downtrend, price breaks above a swing high','Bearish CHoCH = in an uptrend, price breaks below a swing low','CHoCH alone is not a trade signal — wait for more structure'] },
+      { title:'Top-Down Analysis', rules:['Start with Weekly → Daily → 4H → 1H → 15M → 5M','Higher timeframes always override lower timeframe signals','Never trade against the Weekly or Daily structure','The lower TF entry must align with higher TF direction'] }
+    ]
+  },
+  { id:'liquidity', name:'Liquidity', meta:'Smart Money', intro:'Smart money cannot fill large orders at a single price. They engineer price to reach clusters of stop losses — creating liquidity — then reverse after filling.',
+    groups:[
+      { title:'Buy-Side Liquidity (BSL)', rules:['BSL sits ABOVE swing highs and equal highs','These are buy stop orders of traders who are short','Price sweeps BSL = institutions selling into buyers','After BSL sweep → expect bearish reversal'] },
+      { title:'Sell-Side Liquidity (SSL)', rules:['SSL sits BELOW swing lows and equal lows','These are sell stop orders of traders who are long','Price sweeps SSL = institutions buying from sellers','After SSL sweep → expect bullish reversal'] },
+      { title:'Key Liquidity Levels', rules:['Equal Highs (EQH) = very obvious BSL — high priority target','Equal Lows (EQL) = very obvious SSL — high priority target','Previous Day High/Low = daily liquidity levels','Previous Week High/Low = weekly liquidity levels','Round numbers = psychological liquidity (1.1000, 24000)'] },
+      { title:'Trading Liquidity', rules:['Identify BSL and SSL on your chart first','Wait for price to sweep the level with a wick','Look for a strong rejection candle after the sweep','Enter after CHoCH forms on a lower timeframe','Target the OPPOSITE liquidity pool as your TP'] }
+    ]
+  },
+  { id:'ob', name:'Order Blocks', meta:'Institutional Zones', intro:'An Order Block is the last opposing candle before a strong impulsive move. It marks where institutions placed orders. Price returns to fill remaining orders in these zones.',
+    groups:[
+      { title:'Bullish Order Block', rules:['Last bearish (red) candle before a strong bullish move','Mark the HIGH and LOW of this candle as the OB zone','Price returns to this zone to fill remaining buy orders','Enter long when price trades into this zone','SL goes below the lowest wick of the OB'] },
+      { title:'Bearish Order Block', rules:['Last bullish (green) candle before a strong bearish move','Mark the HIGH and LOW of this candle as the OB zone','Price returns to this zone to fill remaining sell orders','Enter short when price trades into this zone','SL goes above the highest wick of the OB'] },
+      { title:'What Makes a Valid OB', rules:['Strong impulsive move away from the OB (3+ candles)','The move should cause a Break of Structure','OB has NOT been previously revisited or mitigated','Volume spike on the impulsive move = stronger OB','Combine with FVG inside the OB for tighter entry'] },
+      { title:'Breaker Blocks', rules:['A failed OB that price has broken completely through','Former support becomes resistance (and vice versa)','Trade breakers when price returns from the other side','Breakers are second-chance entries after a failed OB'] }
+    ]
+  },
+  { id:'fvg', name:'Fair Value Gap', meta:'Price Imbalance', intro:'A 3-candle pattern where price moved so fast that no trading occurred in the gap zone. Markets seek to fill these inefficiencies — creating predictable retracement targets.',
+    groups:[
+      { title:'Identifying FVGs', rules:['Bullish FVG: gap between Candle 1 HIGH and Candle 3 LOW','Bearish FVG: gap between Candle 1 LOW and Candle 3 HIGH','Middle candle (C2) is always the large impulsive candle','There must be NO overlap between C1 and C3 wicks'] },
+      { title:'Trading FVGs', rules:['Enter at the 50% level of the FVG (Consequent Encroachment)','SL below the FVG low (bull) or above FVG high (bear)','TP at next liquidity pool or opposing FVG','FVG + Order Block in same area = highest probability'] },
+      { title:'FVG Types', rules:['Inversion FVG = FVG that has been traded through and flipped','Consequent Encroachment (CE) = the exact 50% of the FVG','Balanced Price Range (BPR) = overlapping bull and bear FVGs','Larger gap = stronger institutional imbalance'] },
+      { title:'Key Rules', rules:['Not all FVGs get filled — trend FVGs can stay open','FVG above current price = bearish magnet','FVG below current price = bullish magnet','Higher TF FVGs are more significant than lower TF FVGs'] }
+    ]
+  },
+  { id:'pd', name:'Premium & Discount', meta:'Fibonacci Framework', intro:"ICT's Fibonacci model to identify where price is cheap (discount) or expensive (premium). Institutions always buy cheap and sell expensive.",
+    groups:[
+      { title:'The Core Concept', rules:['Every range has a 50% equilibrium point','Above 50% = Premium zone — sell here','Below 50% = Discount zone — buy here','Institutions always BUY in discount and SELL in premium'] },
+      { title:'Key Fibonacci Levels', rules:['0.50 = Equilibrium — separates premium from discount','0.618 = Golden Ratio — OTE begins here','0.705 = Golden Pocket — highest probability entry','0.786 = Deep OTE level','0.886 = Extreme discount (or premium) level'] },
+      { title:'Optimal Trade Entry (OTE)', rules:['OTE zone = 62% to 79% retracement of the swing','This is where ICT enters after an impulsive move','Bullish OTE: fib from swing low to high, buy at 62-79%','Bearish OTE: fib from swing high to low, sell at 62-79%','Combine OTE with OB or FVG for maximum confluence'] },
+      { title:'Application Rules', rules:['Only BUY in discount in an uptrend','Only SELL in premium in a downtrend','Never buy at 100% (highs) or sell at 0% (lows)','Higher TF premium/discount overrides lower TF'] }
+    ]
+  },
+  { id:'kz', name:'Kill Zones', meta:'Session Timing', intro:'Specific time windows when institutional traders are most active. Outside these windows price action is random, low volume, and high risk.',
+    groups:[
+      { title:'Asian Kill Zone', rules:['Time: 8:00 PM – 11:00 PM EST','Purpose: Range building — low volatility, accumulation','Mark the Asian HIGH and LOW for manipulation targets','Price during Asian = where stops will be hunted later','Best pairs: JPY, AUD, NZD'] },
+      { title:'London Kill Zone', rules:['Time: 2:00 AM – 5:00 AM EST','Most volatile session — often creates the high or low of the day','London frequently sweeps the Asian session range first','Best pairs: EUR, GBP, CHF','Watch for the Judas swing (false move before the real move)'] },
+      { title:'New York Kill Zone', rules:['Time: 7:00 AM – 10:00 AM EST','Highest volume — confirms or reverses the London move','Best for all major pairs and indices (MNQ, ES)','News events (CPI, NFP) drop during this session','NY PM (1:30–4PM) is a secondary session'] },
+      { title:'Trading Rules', rules:['ONLY take trades during kill zones — never outside them','Set phone alarms for each kill zone start time','If no setup during KZ — there is NO trade that day','Markets closed: Fri 5PM to Sun 5PM EST'] }
+    ]
+  },
+  { id:'amd', name:'Power of 3 (AMD)', meta:'Daily Model', intro:'The foundational daily delivery model. Every trading day follows a three-phase cycle: Accumulation (Asian), Manipulation (London open), Distribution (New York).',
+    groups:[
+      { title:'Phase 1 — Accumulation', rules:['When: Asian session (8PM–11PM EST)','Price consolidates in a small range','Smart money quietly builds their position here','Mark the HIGH and LOW of the Asian range — these are key','No clear direction — it looks like ranging'] },
+      { title:'Phase 2 — Manipulation', rules:['When: London open or New York open','Price breaks in the OPPOSITE direction of the true move first','This is called the Judas Swing — it traps retail traders','It sweeps stops above Asian HIGH (if going lower) or below Asian LOW (if going higher)','This false move is the SETUP SIGNAL — not a trade entry'] },
+      { title:'Phase 3 — Distribution', rules:['The TRUE directional move begins after manipulation','Price reverses hard from the sweep level','Enter AFTER the manipulation is confirmed (CHoCH on 5M/15M)','Target: previous day high/low or weekly liquidity','This is where the big money is made'] },
+      { title:'Trading the AMD Model', rules:['Mark Asian session high and low','Watch London open for a sweep of Asian range','Asian LOW swept = expect bullish distribution in NY','Asian HIGH swept = expect bearish distribution in NY','Enter after sweep + CHoCH, target opposite liquidity'] }
+    ]
+  },
+  { id:'risk', name:'Risk Management', meta:'Capital Preservation', intro:'The most critical skill in trading. You can have a perfect strategy and still blow your account without proper risk management. This comes before everything.',
+    groups:[
+      { title:'Position Sizing', rules:['Never risk more than 1% of account on any single trade','Prop firms: risk 0.5% per trade to protect daily limits','Formula: Risk $ = Account Balance × Risk %','Calculate position size before every entry — no exceptions'] },
+      { title:'Stop Loss Rules', rules:['Always use a stop loss — never trade without one','Place SL below the Order Block low (bullish trades)','Place SL above the Order Block high (bearish trades)','Give SL a few ticks of room past the OB','Never move SL against your position ever'] },
+      { title:'Take Profit Strategy', rules:['TP1 = nearest FVG or liquidity (close 50%)', 'TP2 = previous session high/low (close 25%)', 'TP3 = weekly liquidity target (let 25% run)','Move SL to breakeven after TP1 is hit','Always aim for minimum 1:2 risk to reward'] },
+      { title:'Daily Discipline', rules:['Stop trading after 2% daily loss — come back tomorrow','Stop after 3 consecutive losses — review and reset','Never revenge trade — it will destroy your account','A day with zero trades is better than a bad trade','Journal every trade: entry reason, result, emotion'] }
+    ]
+  }
+];
+
+const checkItems = [
+  'HTF trend confirmed (Weekly / Daily)',
+  'Daily bias determined — Bullish or Bearish',
+  'Price is in Premium or Discount zone',
+  'Liquidity level clearly identified on chart',
+  'Currently inside a Kill Zone session',
+  'Liquidity has been swept (stop hunt occurred)',
+  'CHoCH or BOS confirmed on lower timeframe',
+  'Price is at an Order Block or Fair Value Gap',
+  'Confirmation candle has formed at entry zone',
+  'Stop Loss placed below OB or beyond FVG',
+  'Risk is 1% or less of account balance'
+];
+
+const biasQs = [
+  'Is the Daily or Weekly chart trending upward?',
+  'Is price currently below the 50% Fibonacci level (discount zone)?',
+  'Has sell-side liquidity been swept recently?',
+  'Is there a CHoCH forming on the 15M or 5M chart?',
+  'Is there a valid Bullish Order Block nearby?'
+];
+
+const sessions = [
+  { name:'Asian', start:[20,0], end:[23,0], pairs:'JPY / AUD / NZD' },
+  { name:'London', start:[2,0], end:[5,0], pairs:'EUR / GBP / CHF' },
+  { name:'New York', start:[7,0], end:[10,0], pairs:'All majors + Indices' },
+  { name:'NY Close', start:[14,0], end:[16,0], pairs:'Reversals' }
+];
+
+const patterns = [
+  { id:'bull-ob', name:'Bullish Order Block', type:'bullish', tag:'Reversal Zone',
+    desc:'Last bearish candle before a strong bullish impulse. Returns to fill remaining buy orders.',
+    how:'Wait for price to return to OB zone. Look for CHoCH on 5M/15M. Enter long with SL below the OB low.',
+    tfs:['15M','1H','4H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="25" x2="20" y2="48" stroke="#888" stroke-width="1.2"/><rect x="15" y="30" width="10" height="10" fill="#888"/>
+      <line x1="36" y1="28" x2="36" y2="50" stroke="#888" stroke-width="1.2"/><rect x="31" y="32" width="10" height="12" fill="#888"/>
+      <line x1="52" y1="30" x2="52" y2="52" stroke="#888" stroke-width="1.2"/><rect x="47" y="34" width="10" height="11" fill="#888"/>
+      <rect x="62" y="30" width="14" height="18" fill="transparent" stroke="#f5f6f2" stroke-width="1.5"/>
+      <line x1="69" y1="24" x2="69" y2="52" stroke="#888" stroke-width="1.2"/><rect x="62" y="32" width="14" height="12" fill="#888"/>
+      <text x="69" y="62" text-anchor="middle" fill="#f5f6f2" font-size="7" font-family="monospace">OB</text>
+      <line x1="83" y1="48" x2="83" y2="20" stroke="#f5f6f2" stroke-width="1.2"/><rect x="78" y="22" width="10" height="24" fill="#f5f6f2"/>
+      <line x1="99" y1="35" x2="99" y2="12" stroke="#f5f6f2" stroke-width="1.2"/><rect x="94" y="14" width="10" height="19" fill="#f5f6f2"/>
+      <line x1="115" y1="22" x2="115" y2="8" stroke="#f5f6f2" stroke-width="1.2"/><rect x="110" y="10" width="10" height="16" fill="#f5f6f2"/>
+      <path d="M 133 12 Q 143 38 143 46" stroke="#aaa" stroke-width="1.2" stroke-dasharray="3,2" fill="none"/>
+      <circle cx="143" cy="47" r="3" fill="none" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="62" y1="30" x2="170" y2="30" stroke="#f5f6f2" stroke-width="0.6" stroke-dasharray="4,3"/>
+      <line x1="62" y1="48" x2="170" y2="48" stroke="#f5f6f2" stroke-width="0.6" stroke-dasharray="4,3"/>
+    </svg>`
+  },
+  { id:'bear-ob', name:'Bearish Order Block', type:'bearish', tag:'Reversal Zone',
+    desc:'Last bullish candle before a strong bearish impulse. Returns to fill remaining sell orders.',
+    how:'Wait for price to return to OB zone. Look for bearish CHoCH. Enter short with SL above the OB high.',
+    tfs:['15M','1H','4H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="48" x2="20" y2="72" stroke="#f5f6f2" stroke-width="1.2"/><rect x="15" y="52" width="10" height="14" fill="#f5f6f2"/>
+      <line x1="36" y1="45" x2="36" y2="68" stroke="#f5f6f2" stroke-width="1.2"/><rect x="31" y="48" width="10" height="13" fill="#f5f6f2"/>
+      <line x1="52" y1="42" x2="52" y2="65" stroke="#f5f6f2" stroke-width="1.2"/><rect x="47" y="45" width="10" height="13" fill="#f5f6f2"/>
+      <rect x="62" y="36" width="14" height="18" fill="transparent" stroke="#f5f6f2" stroke-width="1.5"/>
+      <line x1="69" y1="32" x2="69" y2="58" stroke="#f5f6f2" stroke-width="1.2"/><rect x="62" y="36" width="14" height="14" fill="#f5f6f2"/>
+      <text x="69" y="66" text-anchor="middle" fill="#f5f6f2" font-size="7" font-family="monospace">OB</text>
+      <line x1="83" y1="32" x2="83" y2="58" stroke="#888" stroke-width="1.2"/><rect x="78" y="36" width="10" height="18" fill="#888"/>
+      <line x1="99" y1="48" x2="99" y2="72" stroke="#888" stroke-width="1.2"/><rect x="94" y="52" width="10" height="16" fill="#888"/>
+      <line x1="115" y1="62" x2="115" y2="84" stroke="#888" stroke-width="1.2"/><rect x="110" y="65" width="10" height="16" fill="#888"/>
+      <path d="M 133 80 Q 143 58 143 50" stroke="#aaa" stroke-width="1.2" stroke-dasharray="3,2" fill="none"/>
+      <circle cx="143" cy="49" r="3" fill="none" stroke="#aaa" stroke-width="1.2"/>
+      <line x1="62" y1="36" x2="170" y2="36" stroke="#f5f6f2" stroke-width="0.6" stroke-dasharray="4,3"/>
+      <line x1="62" y1="54" x2="170" y2="54" stroke="#f5f6f2" stroke-width="0.6" stroke-dasharray="4,3"/>
+    </svg>`
+  },
+  { id:'bull-fvg', name:'Bullish Fair Value Gap', type:'bullish', tag:'Imbalance',
+    desc:'3-candle pattern leaving a gap between C1 high and C3 low. Price returns to fill the imbalance.',
+    how:'Mark C1 high to C3 low as the FVG zone. Enter long at the 50% CE level. SL below the FVG.',
+    tfs:['5M','15M','1H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="50" x2="40" y2="82" stroke="#888" stroke-width="1.2"/><rect x="34" y="56" width="12" height="18" fill="#888"/>
+      <text x="40" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">C1</text>
+      <line x1="90" y1="12" x2="90" y2="78" stroke="#f5f6f2" stroke-width="1.2"/><rect x="84" y="15" width="12" height="58" fill="#f5f6f2"/>
+      <text x="90" y="92" text-anchor="middle" fill="#f5f6f2" font-size="8" font-family="monospace">C2</text>
+      <line x1="140" y1="8" x2="140" y2="40" stroke="#f5f6f2" stroke-width="1.2"/><rect x="134" y="10" width="12" height="22" fill="#f5f6f2"/>
+      <text x="140" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">C3</text>
+      <rect x="52" y="32" width="76" height="22" fill="rgba(245,246,242,0.1)" stroke="#f5f6f2" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="90" y="46" text-anchor="middle" fill="#f5f6f2" font-size="8" font-family="monospace">FVG</text>
+      <line x1="34" y1="56" x2="134" y2="56" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+      <line x1="134" y1="32" x2="34" y2="32" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+    </svg>`
+  },
+  { id:'bear-fvg', name:'Bearish Fair Value Gap', type:'bearish', tag:'Imbalance',
+    desc:'3-candle pattern leaving a gap between C1 low and C3 high. Price returns to fill the imbalance.',
+    how:'Mark C1 low to C3 high as the FVG zone. Enter short at the 50% CE level. SL above the FVG.',
+    tfs:['5M','15M','1H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <line x1="40" y1="12" x2="40" y2="46" stroke="#f5f6f2" stroke-width="1.2"/><rect x="34" y="14" width="12" height="22" fill="#f5f6f2"/>
+      <text x="40" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">C1</text>
+      <line x1="90" y1="10" x2="90" y2="78" stroke="#888" stroke-width="1.2"/><rect x="84" y="14" width="12" height="58" fill="#888"/>
+      <text x="90" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">C2</text>
+      <line x1="140" y1="50" x2="140" y2="84" stroke="#888" stroke-width="1.2"/><rect x="134" y="54" width="12" height="22" fill="#888"/>
+      <text x="140" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">C3</text>
+      <rect x="52" y="38" width="76" height="20" fill="rgba(245,246,242,0.1)" stroke="#f5f6f2" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="90" y="51" text-anchor="middle" fill="#f5f6f2" font-size="8" font-family="monospace">FVG</text>
+      <line x1="34" y1="38" x2="134" y2="38" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+      <line x1="134" y1="58" x2="34" y2="58" stroke="#aaa" stroke-width="0.7" stroke-dasharray="3,2"/>
+    </svg>`
+  },
+  { id:'choch', name:'Change of Character', type:'bullish', tag:'Reversal Signal',
+    desc:'Price breaks the last significant swing high in a downtrend, signaling a potential reversal.',
+    how:'After a downtrend, wait for price to break above a swing high (CHoCH). Enter on retest of broken level.',
+    tfs:['5M','15M','1H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="10,20 32,38 52,30 72,50 92,42 112,62" stroke="#888" stroke-width="1.5" fill="none"/>
+      <circle cx="52" cy="30" r="3" fill="#888"/>
+      <line x1="8" y1="30" x2="172" y2="30" stroke="#f5f6f2" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <text x="120" y="27" fill="#f5f6f2" font-size="8" font-family="monospace" font-weight="bold">CHoCH</text>
+      <polyline points="112,62 127,46 142,30 157,20 168,14" stroke="#f5f6f2" stroke-width="1.8" fill="none"/>
+      <polygon points="163,10 168,14 158,14" fill="#f5f6f2"/>
+    </svg>`
+  },
+  { id:'bos', name:'Break of Structure', type:'bullish', tag:'Continuation',
+    desc:'Price breaks the previous swing high in an uptrend, confirming trend continuation.',
+    how:'After BOS, look for a pullback to OB or FVG in the trend direction. Enter on the retest.',
+    tfs:['15M','1H','4H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="10,82 28,60 46,68 64,42 82,52 100,28 120,38 140,14" stroke="#f5f6f2" stroke-width="1.5" fill="none"/>
+      <circle cx="64" cy="42" r="3" fill="#aaa"/>
+      <circle cx="100" cy="28" r="3" fill="#aaa"/>
+      <line x1="64" y1="42" x2="172" y2="42" stroke="#f5f6f2" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <text x="120" y="39" fill="#f5f6f2" font-size="9" font-family="monospace" font-weight="bold">BOS</text>
+      <polygon points="135,10 140,14 130,14" fill="#f5f6f2"/>
+    </svg>`
+  },
+  { id:'sweep', name:'Liquidity Sweep', type:'bearish', tag:'Trap Setup',
+    desc:'Price wicks above equal highs to grab buy stops, then reverses sharply downward.',
+    how:'After a sweep with a strong rejection wick, wait for CHoCH on lower TF. Enter in the reversal direction.',
+    tfs:['5M','15M','1H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="40" x2="172" y2="40" stroke="#aaa" stroke-width="0.8" stroke-dasharray="4,2"/>
+      <text x="12" y="36" fill="#aaa" font-size="7" font-family="monospace">EQH</text>
+      <line x1="20" y1="50" x2="20" y2="72" stroke="#f5f6f2" stroke-width="1.2"/><rect x="15" y="52" width="10" height="13" fill="#f5f6f2"/>
+      <line x1="36" y1="45" x2="36" y2="68" stroke="#f5f6f2" stroke-width="1.2"/><rect x="31" y="47" width="10" height="14" fill="#f5f6f2"/>
+      <line x1="52" y1="42" x2="52" y2="66" stroke="#f5f6f2" stroke-width="1.2"/><rect x="47" y="44" width="10" height="14" fill="#f5f6f2"/>
+      <line x1="72" y1="16" x2="72" y2="68" stroke="#888" stroke-width="1.8"/>
+      <rect x="67" y="40" width="10" height="20" fill="#888"/>
+      <text x="72" y="12" text-anchor="middle" fill="#aaa" font-size="8" font-family="monospace">SWEEP</text>
+      <line x1="88" y1="44" x2="88" y2="68" stroke="#888" stroke-width="1.2"/><rect x="83" y="48" width="10" height="16" fill="#888"/>
+      <line x1="104" y1="54" x2="104" y2="76" stroke="#888" stroke-width="1.2"/><rect x="99" y="58" width="10" height="14" fill="#888"/>
+      <line x1="120" y1="62" x2="120" y2="82" stroke="#888" stroke-width="1.2"/><rect x="115" y="66" width="10" height="12" fill="#888"/>
+    </svg>`
+  },
+  { id:'amd', name:'Power of 3 (AMD)', type:'neutral', tag:'Session Model',
+    desc:'Accumulation (Asian) → Manipulation (London) → Distribution (New York). The daily delivery cycle.',
+    how:'Mark Asian range. Watch London for a sweep of one side. Enter in the opposite direction for distribution.',
+    tfs:['15M','1H'],
+    svg:`<svg viewBox="0 0 180 95" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="8" width="46" height="79" fill="rgba(245,246,242,0.04)" stroke="#333" stroke-width="1"/>
+      <rect x="58" y="8" width="36" height="79" fill="rgba(245,246,242,0.04)" stroke="#333" stroke-width="1"/>
+      <rect x="98" y="8" width="74" height="79" fill="rgba(245,246,242,0.04)" stroke="#333" stroke-width="1"/>
+      <text x="31" y="18" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">ACCUM</text>
+      <text x="76" y="18" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">MANIP</text>
+      <text x="135" y="18" text-anchor="middle" fill="#555" font-size="7" font-family="monospace">DISTRIB</text>
+      <polyline points="14,55 22,53 30,57 38,52 46,56 54,55" stroke="#f5f6f2" stroke-width="1.2" fill="none"/>
+      <line x1="8" y1="50" x2="54" y2="50" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
+      <line x1="8" y1="60" x2="54" y2="60" stroke="#555" stroke-width="0.6" stroke-dasharray="3,2"/>
+      <polyline points="58,55 66,65 74,74 80,80 86,72 94,55" stroke="#888" stroke-width="1.2" fill="none"/>
+      <circle cx="80" cy="80" r="3" fill="none" stroke="#aaa" stroke-width="1.2"/>
+      <polyline points="98,70 108,58 118,46 128,34 138,24 148,18 160,14 168,11" stroke="#f5f6f2" stroke-width="1.8" fill="none"/>
+      <polygon points="163,7 168,11 158,11" fill="#f5f6f2"/>
+    </svg>`
+  }
+];
+
+// ── RENDER CONCEPTS ───────────────────────────────────
+let openConcept = null;
+function renderConcepts() {
+  document.getElementById('concept-list').innerHTML = concepts.map((c, i) => `
+    <div>
+      <div class="concept-row ${openConcept===c.id?'on':''}" onclick="toggleConcept('${c.id}')">
+        <span class="concept-num">0${i+1}</span>
+        <span class="concept-name">${c.name}</span>
+        <span class="concept-meta">${c.meta}</span>
+        <span class="concept-arrow">&#9654;</span>
+      </div>
+      <div class="concept-panel ${openConcept===c.id?'on':''}">
+        <div class="concept-panel-inner">
+          <p class="concept-intro">${c.intro}</p>
+          ${c.groups.map(g=>`
+            <div class="rule-group">
+              <div class="rule-group-title">${g.title}</div>
+              ${g.rules.map(r=>`<div class="rule-item"><span class="rule-dash">—</span><span>${r}</span></div>`).join('')}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleConcept(id) {
+  openConcept = openConcept === id ? null : id;
+  renderConcepts();
+}
+renderConcepts();
+
+// ── RENDER PATTERNS ───────────────────────────────────
+let openPat = null;
+let patFilter = 'all';
+function filterPat(f, btn) {
+  patFilter = f; openPat = null;
+  document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPatterns();
+}
+function renderPatterns() {
+  const filtered = patterns.filter(p => patFilter==='all' || p.type===patFilter);
+  document.getElementById('pattern-grid').innerHTML = filtered.map(p=>`
+    <div class="pat-card ${openPat===p.id?'on':''}" onclick="togglePat('${p.id}')">
+      <div class="pat-chart">${p.svg}</div>
+      <div class="pat-info">
+        <div class="pat-name">${p.name}</div>
+        <div class="pat-tag">${p.tag}</div>
+        <div class="pat-desc">${p.desc}</div>
+        <div class="pat-tfs">${p.tfs.map(t=>`<span class="pat-tf">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+  const detail = document.getElementById('pat-detail');
+  if (openPat) {
+    const p = patterns.find(x=>x.id===openPat);
+    detail.innerHTML = `
+      <strong style="font-size:13px">${p.name}</strong>
+      <p style="font-size:11px;color:var(--dim);margin:8px 0 10px;line-height:1.6">${p.desc}</p>
+      <div class="how-box">
+        <div class="how-label">How to Trade</div>
+        <div class="how-text">${p.how}</div>
+      </div>
+    `;
+    detail.classList.add('on');
+  } else {
+    detail.classList.remove('on');
+  }
+}
+function togglePat(id) {
+  openPat = openPat===id ? null : id;
+  renderPatterns();
+}
+renderPatterns();
+
+// ── SESSIONS ──────────────────────────────────────────
+function pad2(n){return String(n).padStart(2,'0');}
+function tickSessions() {
+  const now = new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));
+  const h=now.getHours(), m=now.getMinutes(), s=now.getSeconds(), day=now.getDay();
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const el=document.getElementById('clock-time');
+  const de=document.getElementById('clock-date');
+  if(el) el.textContent=`${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+  if(de) de.textContent=`${days[day]} — New York EST`;
+  const closed = day===6||(day===0&&h<17)||(day===5&&h>=17);
+  const wb = document.getElementById('weekend-banner');
+  if(wb) wb.classList.toggle('on', closed);
+  const nowSec = h*3600+m*60+s;
+  const grid = document.getElementById('session-grid');
+  if(!grid) return;
+  grid.innerHTML = sessions.map(ses=>{
+    const ss=ses.start[0]*3600+ses.start[1]*60;
+    const es=ses.end[0]*3600+ses.end[1]*60;
+    const live=!closed&&nowSec>=ss&&nowSec<es;
+    let until = live ? es-nowSec : ss-nowSec;
+    if(until<0) until+=86400;
+    const soon=!closed&&!live&&until<3600;
+    const ch=Math.floor(until/3600), cm=Math.floor((until%3600)/60), cs=until%60;
+    const countdown=closed?'--:--:--':`${pad2(ch)}:${pad2(cm)}:${pad2(cs)}`;
+    const status=closed?'Weekend':live?'Live Now':soon?'Opening Soon':'Closed';
+    return `<div class="session-card ${live?'live':soon?'soon':''} ${closed?'weekend-mode':''}">
+      <div class="session-name">${ses.name}</div>
+      <div class="session-time">${countdown}</div>
+      <div class="session-status">${status}</div>
+      <div style="font-size:8px;color:var(--dim);margin-top:4px;font-family:'Syne Mono',monospace">${pad2(ses.start[0])}:${pad2(ses.start[1])}–${pad2(ses.end[0])}:${pad2(ses.end[1])} EST</div>
+    </div>`;
+  }).join('');
+}
+tickSessions();
+setInterval(tickSessions, 1000);
+
+// ── CHECKLIST ─────────────────────────────────────────
+let checks = new Array(checkItems.length).fill(false);
+function renderChecklist() {
+  const done = checks.filter(Boolean).length;
+  const total = checkItems.length;
+  document.getElementById('check-txt').textContent = `${done} / ${total} complete`;
+  document.getElementById('prog-bar').style.width = `${done/total*100}%`;
+  document.getElementById('check-list').innerHTML = checkItems.map((item,i)=>`
+    <div class="check-item ${checks[i]?'done':''}" onclick="toggleCheck(${i})">
+      <div class="check-box"><span class="check-tick">&#10003;</span></div>
+      <span class="check-text">${item}</span>
+    </div>
+  `).join('');
+  document.getElementById('ready-note').classList.toggle('on', done===total);
+}
+function toggleCheck(i){checks[i]=!checks[i];renderChecklist();}
+function resetChecks(){checks=new Array(checkItems.length).fill(false);renderChecklist();}
+renderChecklist();
+
+// ── BIAS ──────────────────────────────────────────────
+let biasAns = new Array(biasQs.length).fill(null);
+function renderBias() {
+  document.getElementById('bias-grid').innerHTML = biasQs.map((q,i)=>`
+    <div class="bias-q-card">
+      <div class="bias-question">${q}</div>
+      <div class="bias-btns">
+        <button class="bias-btn ${biasAns[i]===true?'yes':''}" onclick="setBias(${i},true)">Yes</button>
+        <button class="bias-btn ${biasAns[i]===false?'no':''}" onclick="setBias(${i},false)">No</button>
+        <button class="bias-btn clr" onclick="setBias(${i},null)">—</button>
+      </div>
+    </div>
+  `).join('');
+  const bull=biasAns.filter(v=>v===true).length;
+  const bear=biasAns.filter(v=>v===false).length;
+  const val=document.getElementById('bias-val');
+  const sub=document.getElementById('bias-sub');
+  if(bull>bear){val.textContent='Bullish';val.style.color='var(--up)';}
+  else if(bear>bull){val.textContent='Bearish';val.style.color='var(--down)';}
+  else{val.textContent='Neutral';val.style.color='var(--neutral)';}
+  sub.textContent=`${bull} bullish signals · ${bear} bearish signals`;
+}
+function setBias(i,v){biasAns[i]=v;renderBias();}
+renderBias();
+
+// ── CALCULATOR ────────────────────────────────────────
+function calcIt() {
+  const acc=+document.getElementById('c-acc').value;
+  const risk=+document.getElementById('c-risk').value;
+  const entry=+document.getElementById('c-entry').value;
+  const sl=+document.getElementById('c-sl').value;
+  const tp1=+document.getElementById('c-tp1').value;
+  const tp2=+document.getElementById('c-tp2').value;
+  const inst=document.getElementById('c-inst').value;
+  if(!acc||!risk||!entry||!sl) return;
+  const dollarRisk=acc*risk/100;
+  const slDist=Math.abs(entry-sl);
+  const tp1d=tp1?Math.abs(tp1-entry):0;
+  const tp2d=tp2?Math.abs(tp2-entry):0;
+  const pvMap={forex:10,mnq:2,mes:5,nq:20,es:50};
+  const pv=pvMap[inst];
+  let size, p1=0, p2=0;
+  if(inst==='forex'){const lots=dollarRisk/(slDist*10000);size=lots.toFixed(2)+' lots';p1=tp1d*10000*lots;p2=tp2d*10000*lots;}
+  else{const c=Math.floor(dollarRisk/(slDist*pv));size=c+' contract'+(c!==1?'s':'');p1=tp1d*pv*c;p2=tp2d*pv*c;}
+  document.getElementById('r-risk').textContent='-$'+dollarRisk.toFixed(2);
+  document.getElementById('r-size').textContent=size;
+  document.getElementById('r-sl').textContent=slDist.toFixed(2)+' pts';
+  document.getElementById('r-p1').textContent=tp1?'+$'+p1.toFixed(2):'—';
+  document.getElementById('r-p2').textContent=tp2?'+$'+p2.toFixed(2):'—';
+  document.getElementById('r-rr1').textContent=slDist&&tp1d?'1 : '+(tp1d/slDist).toFixed(2):'—';
+  document.getElementById('r-rr2').textContent=slDist&&tp2d?'1 : '+(tp2d/slDist).toFixed(2):'—';
+  document.getElementById('calc-box').classList.add('on');
+}
+
+// ── SCANNER ───────────────────────────────────────────
+function runScan() {
+  const price=+document.getElementById('s-price').value;
+  const high=+document.getElementById('s-high').value;
+  const low=+document.getElementById('s-low').value;
+  const pdh=+document.getElementById('s-pdh').value;
+  const pdl=+document.getElementById('s-pdl').value;
+  const ah=+document.getElementById('s-ah').value;
+  const al=+document.getElementById('s-al').value;
+  const trend=document.getElementById('s-trend').value;
+  if(!price||!high||!low) return;
+  const signals=[];
+  const mid=(pdh+pdl)/2;
+  const inDiscount=price<mid;
+  const inPremium=price>mid;
+  if(trend==='bull'&&inDiscount) signals.push({type:'up',icon:'▲',title:'Discount Zone (Bullish)',desc:`Price at ${price} is below the 50% level of ${mid.toFixed(2)}. In an uptrend this is a valid buy area.`});
+  if(trend==='bear'&&inPremium) signals.push({type:'dn',icon:'▼',title:'Premium Zone (Bearish)',desc:`Price at ${price} is above the 50% level of ${mid.toFixed(2)}. In a downtrend this is a valid sell area.`});
+  if(al&&Math.abs(price-al)/al<0.002) signals.push({type:'up',icon:'◉',title:'At Asian Low — SSL Target',desc:`Price is near the Asian session low (${al}). A sweep here followed by a reversal is a high probability bullish setup.`});
+  if(ah&&Math.abs(price-ah)/ah<0.002) signals.push({type:'dn',icon:'◉',title:'At Asian High — BSL Target',desc:`Price is near the Asian session high (${ah}). A sweep here followed by a reversal is a high probability bearish setup.`});
+  if(pdl&&Math.abs(price-pdl)/pdl<0.002) signals.push({type:'up',icon:'◈',title:'At Previous Day Low — Liquidity',desc:`Price is at the PDL (${pdl}). This is major sell-side liquidity. A sweep and reversal here is a strong bullish signal.`});
+  if(pdh&&Math.abs(price-pdh)/pdh<0.002) signals.push({type:'dn',icon:'◈',title:'At Previous Day High — Liquidity',desc:`Price is at the PDH (${pdh}). This is major buy-side liquidity. A sweep and reversal here is a strong bearish signal.`});
+  const rangeRel=(price-low)/(high-low);
+  if(rangeRel<0.25&&trend==='bull') signals.push({type:'up',icon:'↑',title:'Low of Range — Bullish Watch',desc:`Price is in the lower 25% of the current range. Watch for bullish OB or FVG in this area for a long entry.`});
+  if(rangeRel>0.75&&trend==='bear') signals.push({type:'dn',icon:'↓',title:'High of Range — Bearish Watch',desc:`Price is in the upper 75% of the current range. Watch for bearish OB or FVG in this area for a short entry.`});
+  if(signals.length===0) signals.push({type:'neu',icon:'—',title:'No Clear Setup',desc:'No high-probability ICT setups identified with the current data. Wait for price to reach a key liquidity level or kill zone.'});
+  document.getElementById('scan-result').innerHTML = signals.map(s=>`
+    <div class="scan-row">
+      <div class="scan-icon">${s.icon}</div>
+      <div>
+        <div class="scan-title ${s.type}">${s.title}</div>
+        <div class="scan-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('scan-result').classList.add('on');
+}
+
+// ── JOURNAL ───────────────────────────────────────────
+let trades=[];
+function logTrade(){
+  const pair=document.getElementById('j-pair').value.trim();
+  if(!pair) return;
+  trades.unshift({pair,bias:document.getElementById('j-bias').value,rr:document.getElementById('j-rr').value,res:document.getElementById('j-res').value,notes:document.getElementById('j-notes').value,date:new Date().toLocaleDateString()});
+  document.getElementById('j-pair').value='';
+  document.getElementById('j-rr').value='';
+  document.getElementById('j-notes').value='';
+  renderJournal();
+}
+function renderJournal(){
+  const el=document.getElementById('trade-list');
+  if(!trades.length){el.innerHTML='<div class="no-trades">No trades logged yet</div>';return;}
+  el.innerHTML=trades.map(t=>`
+    <div class="trade-row">
+      <div>
+        <div class="trade-pair">${t.pair}</div>
+        <div class="trade-info">
+          <span class="trade-tag">${t.bias} · R:R ${t.rr||'—'} · ${t.date}</span>
+        </div>
+      </div>
+      <span class="trade-badge ${t.res}">${t.res==='W'?'Win':t.res==='L'?'Loss':'B/E'}</span>
+    </div>
+  `).join('');
+}
+
+// ── AI ────────────────────────────────────────────────
+let aiHistory=[];
+const AI_SYS=`You are an expert ICT (Inner Circle Trader) analyst. Help traders with ICT concepts: market structure, order blocks, fair value gaps, liquidity, kill zones, AMD model, premium/discount, and risk management. Be direct and concise. When analyzing setups: state the bias, identify key levels, give a clear recommendation, state SL placement. Always remind traders to do their own analysis. Keep responses practical and focused.`;
+
+async function sendAI(){
+  const inp=document.getElementById('ai-in');
+  const msg=inp.value.trim();
+  if(!msg) return;
+  inp.value='';
+  addBubble(msg,'user');
+  aiHistory.push({role:'user',content:msg});
+  const btn=document.getElementById('ai-btn');
+  btn.disabled=true;
+  const thinking=addBubble('Analyzing...','thinking');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:AI_SYS,messages:aiHistory})
+    });
+    const data=await res.json();
+    thinking.remove();
+    const reply=data.content&&data.content[0]?data.content[0].text:'Could not get a response. Please try again.';
+    addBubble(reply,'bot');
+    aiHistory.push({role:'assistant',content:reply});
+    if(aiHistory.length>16) aiHistory=aiHistory.slice(-16);
+  }catch(e){
+    thinking.remove();
+    addBubble('Connection error. Check your internet and try again.','bot');
+  }
+  btn.disabled=false;
+}
+
+function addBubble(text,role){
+  const msgs=document.getElementById('ai-msgs');
+  const d=document.createElement('div');
+  d.className='ai-bubble '+role;
+  d.innerHTML=text.split('\n').join('<br>');
+  msgs.appendChild(d);
+  msgs.scrollTop=msgs.scrollHeight;
+  return d;
+}
+
+function chip(text){
+  document.getElementById('ai-in').value=text;
+  sendAI();
+}
+</script>
+</body>
+</html>
